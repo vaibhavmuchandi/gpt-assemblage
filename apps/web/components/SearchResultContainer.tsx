@@ -30,6 +30,7 @@ const SearchResultsContainer = () => {
     });
     const getResults = async (query?: string) => {
         setLoading(true)
+        const clientKey = localStorage.getItem('clientKey');
         try {
             if (!query) {
                 const response = await fetch(`https://api.gptassemblage.com/gpt`, {
@@ -41,6 +42,7 @@ const SearchResultsContainer = () => {
             } else {
                 const response = await fetch(`https://api.gptassemblage.com/gpt?query=${searchTerm}`, {
                     method: "GET",
+                    headers: { 'X-Client-Key': String(clientKey) }
                 })
                 const data = await response.json()
                 setSearchTerm("")

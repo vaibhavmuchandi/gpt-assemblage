@@ -5,9 +5,10 @@ import rateLimit from 'express-rate-limit';
 
 const limiter = rateLimit({
     windowMs: 4 * 60 * 60 * 1000,
-    max: 10,
+    limit: 10,
     standardHeaders: true,
     legacyHeaders: false,
+    keyGenerator: (req) => String(req.headers['x-client-key']) || 'unknown'
 });
 
 const app = express();
