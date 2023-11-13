@@ -31,14 +31,14 @@ const SearchResultsContainer = () => {
         console.log("Getting...")
         try {
             if (!query) {
-                const response = await fetch(`http://localhost:40010/gpt`, {
+                const response = await fetch(`https://api.gptassemblage.com/gpt`, {
                     method: "GET",
                 })
                 const data = await response.json()
                 console.log(data)
                 setResults(data.items)
             } else {
-                const response = await fetch(`http://localhost:40010/gpt?query=${searchTerm}`, {
+                const response = await fetch(`https://api.gptassemblage.com/gpt?query=${searchTerm}`, {
                     method: "GET",
                 })
                 const data = await response.json()
