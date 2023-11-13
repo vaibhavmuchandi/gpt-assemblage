@@ -7,6 +7,7 @@ import { SearchIcon } from "@sanity/icons"
 const SearchResultsContainer = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [results, setResults] = useState<any>([])
+    const [loading, setLoading] = useState(false)
     const notify = () => toast.error('No Results Found!', {
         position: "bottom-right",
         autoClose: 5000,
@@ -29,6 +30,7 @@ const SearchResultsContainer = () => {
     });
     const getResults = async (query?: string) => {
         console.log("Getting...")
+        setLoading(true)
         try {
             if (!query) {
                 const response = await fetch(`https://api.gptassemblage.com/gpt`, {
@@ -53,10 +55,11 @@ const SearchResultsContainer = () => {
         } catch (e) {
             notifyTooManyRequest()
         }
-
+        setLoading(false)
     }
 
     useEffect(() => {
+        setLoading(true)
         getResults()
     }, [])
 
@@ -85,10 +88,13 @@ const SearchResultsContainer = () => {
                     </button>
                 </form>
             </div>
-            {<div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[65vh] overflow-y-scroll overflow-x-hidden">
-                {results.map((result: any, index: any) => (
+            {!loading ? <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[65vh] overflow-y-scroll overflow-x-hidden">
+                {results.length !== 0 && results.map((result: any, index: any) => (
                     <SearchResult key={index} title={result.title} snippet={result.snippet} url={result.link} />
                 ))}
+            </div> : <div className='flex w-full h-full items-center justify-center'><div className="flex justify-center items-center">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
+            </div>
             </div>}
             <ToastContainer />
         </div>
