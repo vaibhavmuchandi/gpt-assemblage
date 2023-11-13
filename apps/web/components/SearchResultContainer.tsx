@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import SearchResult from './SearchResult';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { SearchIcon } from "@sanity/icons"
+import { SearchIcon, ColorWheelIcon, RefreshIcon } from "@sanity/icons"
 
 const SearchResultsContainer = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -29,7 +29,6 @@ const SearchResultsContainer = () => {
         theme: "dark",
     });
     const getResults = async (query?: string) => {
-        console.log("Getting...")
         setLoading(true)
         try {
             if (!query) {
@@ -44,7 +43,7 @@ const SearchResultsContainer = () => {
                     method: "GET",
                 })
                 const data = await response.json()
-
+                setSearchTerm("")
                 if (data.items) {
                     setResults(data.items)
                 } else {
@@ -57,11 +56,6 @@ const SearchResultsContainer = () => {
         }
         setLoading(false)
     }
-
-    useEffect(() => {
-        setLoading(true)
-        getResults()
-    }, [])
 
     const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -86,16 +80,32 @@ const SearchResultsContainer = () => {
                     >
                         <SearchIcon fontSize={26} /> Search
                     </button>
+                    {results.length !== 0 && <button
+                        type="submit"
+                        className="flex flex-row items-center justify-center px-4 py-2 ml-3 bg-gray-800 text-white rounded-r-lg hover:bg-gray-700"
+                        onClick={() => getResults()}
+                    >
+                        <RefreshIcon fontSize={26} /> Refresh
+                    </button>}
                 </form>
             </div>
-            {!loading ? <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[65vh] overflow-y-scroll overflow-x-hidden">
-                {results.length !== 0 && results.map((result: any, index: any) => (
-                    <SearchResult key={index} title={result.title} snippet={result.snippet} url={result.link} />
-                ))}
-            </div> : <div className='flex w-full h-full items-center justify-center'><div className="flex justify-center items-center">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
-            </div>
-            </div>}
+            {!loading ?
+                results.length !== 0 ? <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 h-[65vh] overflow-y-scroll overflow-x-hidden`}>
+                    {results.map((result: any, index: any) => (
+                        <SearchResult key={index} title={result.title} snippet={result.snippet} url={result.link} />
+                    ))}
+                </div> :
+                    <button
+                        type="submit"
+                        className="flex flex-row items-center justify-center px-4 py-2 ml-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700"
+                        onClick={() => getResults()}
+                    >
+                        <ColorWheelIcon fontSize={26} /> Get Random GPTs
+                    </button> :
+                <div className='flex w-full h-full items-center justify-center'><div className="flex justify-center items-center">
+                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
+                </div>
+                </div>}
             <ToastContainer />
         </div>
     );
