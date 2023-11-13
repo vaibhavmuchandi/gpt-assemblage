@@ -8,7 +8,9 @@ const limiter = rateLimit({
     limit: 10,
     standardHeaders: true,
     legacyHeaders: false,
-    keyGenerator: (req) => String(req.headers['x-client-key']) || 'unknown'
+    keyGenerator: (req) => {
+        return String(req.headers['x-client-key']) || 'unknown';
+    }
 });
 
 const app = express();
